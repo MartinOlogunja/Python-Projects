@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 #import libraries
 
 from bs4 import BeautifulSoup
@@ -11,10 +5,6 @@ import requests
 import time
 import datetime
 import smtplib
-
-
-# In[56]:
-
 
 # Connect to Website and pull in data
 
@@ -28,8 +18,6 @@ soup1 = BeautifulSoup(page.content, "html.parser")
 
 soup2 = BeautifulSoup(soup1.prettify(), "html.parser")
 
-#Check the request to ensure no captcha block using print(soup2)
-
 title = soup2.find(class_="order-2 my-2 font-bold text-pt lg:text-4xl lg:my-4", ).get_text()
 
 price = soup2.find(class_='money').get_text()
@@ -38,48 +26,23 @@ print(title)
 print(price)
 
 
-# In[57]:
-
-
+#Strip whitespace and print just values for Price and Title
 price.strip()
-
-
-# In[58]:
-
-
 price.strip()[1:]
-
-
-# In[59]:
-
-
 price = price.strip()[1:]
 title = title.strip()
 
 
-# In[60]:
-
-
-#Create a Timestamp
+#Create and format a Date and Timestamp 
 
 import datetime
-
-# Get the current date and time
 current_time = pd.Timestamp(datetime.datetime.now())
-
-# Format the current_time without decimal seconds
 formatted_time = current_time.strftime('%Y-%m-%d %H:%M:%S')
-
 print(formatted_time)
 
-
-# In[61]:
-
-
-#Create a CSV and import Product Title and Price into the CSV
+#Create a CSV and import the Product Title and Price into the CSV
 
 import csv
-
 header = ['Product', 'Price', 'Date & Time']
 data = [title, price, formatted_time]
 
@@ -89,9 +52,6 @@ with open('KickGame_WebScraper.csv', 'w', newline='', encoding='UTF8') as f:
     writer.writerow(data)
 
 
-# In[62]:
-
-
 #Read CSV using Pandas
 
 import pandas as pd
@@ -99,10 +59,6 @@ import pandas as pd
 df = pd.read_csv(r'/Users/marti/ATA/KickGame_WebScraper.csv')
 
 print(df)
-
-
-# In[ ]:
-
 
 #Creating an email price alert when the product hits a specified price
 
@@ -125,20 +81,14 @@ def send_mail():
     )
 
 
-# In[35]:
-
-
-#Now we're appending the data to the csv
+#Appending the data to the csv
 
 with open('KickGame_WebScraper.csv', 'a+', newline='', encoding='UTF8') as f:
     writer = csv.writer(f)
     writer.writerow(data)
 
 
-# In[64]:
-
-
-#Defining a function that pulls the data from the webpage, and appends it to a csv. For later use. 
+#Defining a function that pulls the data from the webpage and appends it to a CSV.
 
 def check_price():
     URL = 'https://www.kickgame.co.uk/products/air-jordan-4-retro-military-black-dh6927-111?variant=41784390025405'
@@ -177,11 +127,7 @@ def check_price():
     if (price < 600):
         send_mail()
 
-
-# In[ ]:
-
-
-#Automating the function of above to scrape the data every 24 hours
+#Automating the function above to scrape the data every 24 hours
 
 while(True):
     check_price()
